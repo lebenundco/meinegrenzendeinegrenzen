@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meine Grenze – deine Grenze</title>
+  <style>
+    :root {
+      --bg: #f6f8fa;
+      --surface: #ffffff;
+      --border: #d0d7de;
+      --text: #1f2328;
+      --muted: #59636e;
+      --primary: #1d4ed8;
+      --primary-light: #eff6ff;
+      --green: #16a34a;
+      --green-bg: #dcfce7;
+      --yellow: #d97706;
+      --yellow-bg: #fef3c7;
+      --red: #dc2626;
+      --red-bg: #fee2e2;
+      --blue: #0284c7;
+      --blue-bg: #e0f2fe;
+      --purple: #7c3aed;
+      --purple-bg: #f3e8ff;
+      --purple-border: #d8b4fe;
+      --gold: #eab308;
+      --gold-bg: #fef9c3;
+      --radius: 18px;
+      --shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Verdana, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .app-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--primary-light);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .points-pill {
+      background: var(--gold-bg);
+      border: 2px solid var(--gold);
+      color: #713f12;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 17px;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .points-pill.pop {
+      transform: scale(1.18);
+      background: #fef08a;
+    }
+
+    button {
+      font-family: Verdana, Arial, sans-serif;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 14px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 12px 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background-color 0.15s, border-color 0.15s, transform 0.12s;
+    }
+
+    button:hover:not(:disabled) {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #1e40af;
+      border-color: #1e40af;
+    }
+
+    .btn-pause {
+      background: #fffbeb;
+      border-color: #f59e0b;
+      color: #92400e;
+    }
+
+    .btn-speak {
+      background: var(--blue-bg);
+      border-color: var(--blue);
+      color: #075985;
+      padding: 10px 16px;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    main {
+      max-width: 920px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 20px 64px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .menu-intro {
+      background: var(--primary-light);
+      border: 2px solid #93c5fd;
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .menu-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px;
+      text-align: left;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .menu-card:hover {
+      border-color: var(--primary);
+      background: #fafcff;
+    }
+
+    .menu-card.completed {
+      border-color: var(--green);
+      background: #f0fdf4;
+    }
+
+    .menu-top-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .ex-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .badge-mini {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: var(--green-bg);
+      border: 2px solid var(--green);
+      color: #14532d;
+      font-size: 14px;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .menu-symbol {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .progress-box {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 22px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .step-dots {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .step-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .step-dot.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .step-dot.done {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: #14532d;
+    }
+
+    .anim-demo-stage {
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 24px;
+      margin: 20px 0 24px;
+    }
+
+    .anim-step {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .anim-step:last-child {
+      margin-bottom: 0;
+    }
+
+    .anim-step.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .anim-step.highlight {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .anim-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .turn-banner {
+      padding: 18px 24px;
+      border-radius: 16px;
+      font-size: 21px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .turn-a {
+      background: var(--blue-bg);
+      border: 3px solid var(--blue);
+      color: #075985;
+    }
+
+    .turn-b {
+      background: var(--purple-bg);
+      border: 3px solid var(--purple);
+      color: #4c1d95;
+    }
+
+    .turn-team {
+      background: var(--green-bg);
+      border: 3px solid var(--green);
+      color: #14532d;
+    }
+
+    .situation-card {
+      background: #f8fafc;
+      border: 3px solid #94a3b8;
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .situation-content {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .situation-icon {
+      font-size: 38px;
+      background: #ffffff;
+      width: 68px;
+      height: 68px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .situation-text {
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 700px) {
+      .grid-3, .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .choice-btn {
+      flex-direction: column;
+      padding: 26px 18px;
+      gap: 14px;
+      border-width: 3px;
+      min-height: 165px;
+    }
+
+    .zone-green {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: #14532d;
+    }
+    .zone-green:hover:not(:disabled) { background: #bbf7d0; }
+
+    .zone-yellow {
+      background: var(--yellow-bg);
+      border-color: var(--yellow);
+      color: #78350f;
+    }
+    .zone-yellow:hover:not(:disabled) { background: #fde68a; }
+
+    .zone-red {
+      background: var(--red-bg);
+      border-color: var(--red);
+      color: #7f1d1d;
+    }
+    .zone-red:hover:not(:disabled) { background: #fecaca; }
+
+    .beam-wrapper {
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      border-radius: 18px;
+      padding: 28px 24px;
+      margin-bottom: 24px;
+    }
+
+    .beam-labels {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 14px;
+      font-size: 17px;
+    }
+
+    .beam-track {
+      position: relative;
+      height: 92px;
+      border-radius: 16px;
+      background: linear-gradient(90deg, #dcfce7 0%, #e0f2fe 50%, #f1f5f9 100%);
+      border: 3px solid #64748b;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .beam-line {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      height: 6px;
+      background: #94a3b8;
+      border-radius: 999px;
+    }
+
+    .draggable-card {
+      position: relative;
+      z-index: 2;
+      background: #ffffff;
+      border: 3px solid var(--primary);
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-weight: bold;
+      font-size: 17px;
+      color: var(--primary);
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.18);
+      cursor: grab;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: box-shadow 0.15s;
+    }
+
+    .draggable-card:active {
+      cursor: grabbing;
+      box-shadow: 0 8px 20px rgba(29, 78, 216, 0.3);
+    }
+
+    .beam-hint-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .sentence-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .sentence-btn {
+      justify-content: flex-start;
+      text-align: left;
+      padding: 18px 22px;
+      background: var(--purple-bg);
+      border: 2px solid var(--purple-border);
+      color: #3b0764;
+      font-size: 19px;
+    }
+    .sentence-btn:hover:not(:disabled) {
+      background: #e9d5ff;
+      border-color: var(--purple);
+    }
+
+    .quiz-feedback {
+      border-radius: 14px;
+      padding: 20px;
+      margin: 18px 0;
+      border-width: 2px;
+      border-style: solid;
+    }
+
+    .quiz-ok {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: #14532d;
+    }
+
+    .quiz-bad {
+      background: var(--red-bg);
+      border-color: var(--red);
+      color: #7f1d1d;
+    }
+
+    .compare-box {
+      background: #f8fafc;
+      border: 3px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 16px 0;
+    }
+
+    @media (max-width: 650px) {
+      .compare-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .choice-summary {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .reflection-box {
+      background: #fefce8;
+      border: 2px solid #facc15;
+      border-radius: 14px;
+      padding: 20px;
+      margin: 18px 0;
+    }
+
+    .impulse-box {
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: #ffffff;
+      border: 2px dashed #eab308;
+      border-radius: 12px;
+      font-size: 16px;
+      color: #713f12;
+    }
+
+    .impulse-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .impulse-chip {
+      background: #fef9c3;
+      border: 1px solid #eab308;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .talk-textarea {
+      width: 100%;
+      min-height: 92px;
+      margin-top: 14px;
+      padding: 14px 16px;
+      font-family: Verdana, Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.5;
+      border: 2px solid #94a3b8;
+      border-radius: 12px;
+      background: #ffffff;
+      color: var(--text);
+      resize: vertical;
+    }
+
+    .talk-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .grand-award-card {
+      text-align: center;
+      padding: 36px 24px;
+    }
+
+    .grand-badge {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--gold-bg);
+      border: 5px solid var(--gold);
+      border-radius: 28px;
+      padding: 34px 44px;
+      margin: 24px 0 30px;
+      box-shadow: 0 12px 30px rgba(234, 179, 8, 0.3);
+      animation: badgePop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes badgePop {
+      0% { transform: scale(0.25) rotate(-10deg); opacity: 0; }
+      70% { transform: scale(1.08) rotate(2deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .grand-emoji {
+      font-size: 76px;
+      margin-bottom: 12px;
+      animation: floatGentle 2.4s ease-in-out infinite;
+    }
+
+    @keyframes floatGentle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .confetti-piece {
+      position: fixed;
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      top: -24px;
+      z-index: 999;
+      pointer-events: none;
+      animation: confettiFall 2.8s ease-out forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(105vh) rotate(620deg); opacity: 0; }
+    }
+
+    .pause-overlay {
+      position: fixed;
+      inset: 0;
+      background: #f1f5f9;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .pause-overlay.visible {
+      display: flex;
+    }
+
+    .pause-card {
+      background: #ffffff;
+      border: 3px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 540px;
+      width: 100%;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="app-title">
+      <div class="app-icon">🛡️</div>
+      <span>Meine Grenze – deine Grenze</span>
+    </div>
+    <div class="header-actions">
+      <div id="points-pill" class="points-pill">
+        <span>⭐</span>
+        <span id="points-count">0 Punkte</span>
+      </div>
+      <button id="btn-home" class="hidden" onclick="goHome()">🏠 Übersicht</button>
+      <button class="btn-pause" onclick="togglePause(true)">⏸️ Pause</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ÜBERSICHT -->
+    <section id="view-home">
+      <div class="card">
+        <div class="menu-intro">
+          <div>
+            <strong>Arbeitet zu zweit (Person A & Person B).</strong><br />
+            <span style="color: var(--muted);">Startet bei <strong>1</strong> und arbeitet euch bis <strong>4</strong> durch. Am Ende wartet euer Abzeichen!</span>
+          </div>
+          <button class="btn-speak" onclick="speakText('Arbeitet zu zweit, Person A und Person B. Startet bei Übung 1 und arbeitet euch bis Übung 4 durch. Am Ende wartet euer Abzeichen.')">🔊 Vorlesen</button>
+        </div>
+
+        <div class="menu-grid">
+          <button class="menu-card" id="menu-card-1" onclick="startExercise(1)">
+            <span class="badge-mini hidden" id="done-tag-1">✅ Fertig</span>
+            <div class="menu-top-row">
+              <span class="ex-number">1</span>
+              <div class="menu-symbol" style="background: var(--green-bg); border-color: var(--green);">🚦</div>
+            </div>
+            <h3>1. Ampel-Check</h3>
+            <p style="font-weight: normal; color: var(--muted);">Grün, Gelb oder Rot wählen und kurz sprechen.</p>
+          </button>
+
+          <button class="menu-card" id="menu-card-2" onclick="startExercise(2)">
+            <span class="badge-mini hidden" id="done-tag-2">✅ Fertig</span>
+            <div class="menu-top-row">
+              <span class="ex-number">2</span>
+              <div class="menu-symbol" style="background: var(--blue-bg); border-color: var(--blue);">📏</div>
+            </div>
+            <h3>2. Abstands-Strahl</h3>
+            <p style="font-weight: normal; color: var(--muted);">Karte auf dem Strahl von Nah bis Weit weg schieben.</p>
+          </button>
+
+          <button class="menu-card" id="menu-card-3" onclick="startExercise(3)">
+            <span class="badge-mini hidden" id="done-tag-3">✅ Fertig</span>
+            <div class="menu-top-row">
+              <span class="ex-number">3</span>
+              <div class="menu-symbol" style="background: var(--purple-bg); border-color: var(--purple);">💬</div>
+            </div>
+            <h3>3. Stopp-Quiz</h3>
+            <p style="font-weight: normal; color: var(--muted);">Höfliche und klare Stopp-Sätze erkennen.</p>
+          </button>
+
+          <button class="menu-card" id="menu-card-4" onclick="startExercise(4)">
+            <span class="badge-mini hidden" id="done-tag-4">✅ Fertig</span>
+            <div class="menu-top-row">
+              <span class="ex-number">4</span>
+              <div class="menu-symbol" style="background: var(--yellow-bg); border-color: var(--yellow);">🤝</div>
+            </div>
+            <h3>4. Helfen oder Einmischen?</h3>
+            <p style="font-weight: normal; color: var(--muted);">7 Quiz-Fragen zu Hilfe, Tipps & Privatem.</p>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ÜBUNG -->
+    <section id="view-exercise" class="hidden">
+      <div class="progress-box">
+        <strong id="exercise-title">Übung</strong>
+        <div class="step-dots" id="step-dots"></div>
+        <span id="step-counter" style="color: var(--muted); font-weight: bold;">Beispiel</span>
+      </div>
+
+      <div class="card">
+        <!-- ANIMIERTE BEISPIEL-ANLEITUNG -->
+        <div id="demo-container">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <h2 style="font-size: 21px;">👀 So geht die Übung (Beispiel):</h2>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-speak" onclick="replayDemoAnimation()">🔄 Nochmal zeigen</button>
+              <button class="btn-speak" id="btn-read-demo">🔊 Vorlesen</button>
+            </div>
+          </div>
+
+          <div class="anim-demo-stage" id="anim-demo-stage"></div>
+
+          <button class="btn-primary" onclick="startRealTasks()">▶️ Verstanden – Übung starten</button>
+        </div>
+
+        <!-- AKTIVE ÜBUNG -->
+        <div id="task-container" class="hidden">
+          <div id="turn-banner"></div>
+
+          <div class="situation-card">
+            <div class="situation-content">
+              <div class="situation-icon" id="card-icon">📘</div>
+              <div class="situation-text" id="card-text">Situation</div>
+            </div>
+            <button class="btn-speak" id="btn-read-card">🔊 Vorlesen</button>
+          </div>
+
+          <div id="answer-area"></div>
+          <div id="compare-area" class="compare-box hidden"></div>
+        </div>
+
+        <!-- ABZEICHEN-VERLEIHUNG (ERSCHEINT ERST NACH ÜBUNG 4) -->
+        <div id="award-container" class="grand-award-card hidden">
+          <h2 style="font-size: 28px; color: #14532d;">🎉 Geschafft! Abzeichen-Verleihung!</h2>
+          <p style="margin-top: 8px; color: var(--muted);">Ihr habt alle Übungen gemeistert. Hier ist euer Team-Abzeichen:</p>
+
+          <div class="grand-badge">
+            <div class="grand-emoji">🛡️</div>
+            <div style="font-size: 26px; font-weight: bold; color: #713f12;">Safe-Space-Team</div>
+            <div style="font-size: 16px; color: #854d0e; margin-top: 4px;">Klare Grenzen &amp; sicherer Raum füreinander</div>
+            <div id="award-final-points" style="font-size: 19px; font-weight: bold; color: #854d0e; margin-top: 12px;">0 Punkte gesammelt</div>
+          </div>
+
+          <div>
+            <button class="btn-primary" onclick="goHome()">🏠 Zurück zur Übersicht</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PAUSE OVERLAY -->
+  <div id="pause-overlay" class="pause-overlay">
+    <div class="pause-card">
+      <div style="font-size: 48px; margin-bottom: 14px;">⏸️</div>
+      <h2 style="font-size: 24px; margin-bottom: 10px;">Kurze Pause</h2>
+      <p style="margin-bottom: 26px; color: var(--muted);">
+        Atme kurz durch. Wenn du bereit bist, geht es weiter.
+      </p>
+      <button class="btn-primary" onclick="togglePause(false)">▶️ Weiterarbeiten</button>
+    </div>
+  </div>
+
+  <script>
+    const EXERCISES = {
+      1: {
+        title: "1. Ampel-Check",
+        demoSpeech: "Beispiel für 1. Ampel-Check. Schritt 1: Lest die Karte. Schritt 2: Person A wählt Grün, Gelb oder Rot. Schritt 3: Person B wählt auch. Danach redet ihr kurz und tragt eure Gedanken ins Feld ein.",
+        demoSteps: [
+          { num: "1", icon: "✏️", text: "Lest die Karte. Beispiel: <strong>„Jemand nimmt ungefragt deinen Stift.“</strong>" },
+          { num: "2", icon: "👤", text: "<strong>Person A</strong> wählt 🟢 Grün, 🟡 Gelb oder 🔴 Rot." },
+          { num: "3", icon: "✍️", text: "<strong>Person B</strong> wählt auch – dann sprecht ihr kurz und tragt eure Gedanken ein (<strong>+10 Punkte</strong>)." }
+        ],
+        items: [
+          {
+            icon: "✏️",
+            text: "Jemand nimmt ungefragt deinen Stift.",
+            reflection: "<strong>Wie findet ihr das – und warum?</strong>",
+            impulses: ["Freunde vs. Fremde", "kurz leihen", "vorher fragen", "eigene Sachen"]
+          },
+          {
+            icon: "🧍",
+            text: "Jemand stellt sich sehr nah vor dich.",
+            reflection: "<strong>Wie fühlt sich das an – und wann ist es okay?</strong>",
+            impulses: ["lautes Klassenzimmer", "gute Freunde", "unangenehm", "Platz brauchen"]
+          },
+          {
+            icon: "📱",
+            text: "Jemand schaut auf dein Handy.",
+            reflection: "<strong>Was denkt ihr darüber?</strong>",
+            impulses: ["zusammen Video schauen", "Nachrichten", "Fotos", "Privatsphäre"]
+          },
+          {
+            icon: "💬",
+            text: "Jemand fragt immer wieder, warum du traurig bist.",
+            reflection: "<strong>Wann hilft Nachfragen – und wann nervt es?</strong>",
+            impulses: ["es ist mir unangenehm", "Sorgen machen", "allein sein wollen", "Druck", "später reden"]
+          }
+        ]
+      },
+      2: {
+        title: "2. Abstands-Strahl",
+        demoSpeech: "Beispiel für 2. Abstands-Strahl. Schiebt die Karte auf dem Strahl zwischen Nah und Weit weg. Zuerst Person A, dann Person B. Danach redet ihr kurz und tragt eure Gedanken ein.",
+        demoSteps: [
+          { num: "1", icon: "🗺️", text: "Lest die Situation. Beispiel: <strong>„Eine fremde Person fragt nach dem Weg.“</strong>" },
+          { num: "2", icon: "↔️", text: "Schiebt die Karte auf dem Strahl zwischen <strong>Nah</strong> und <strong>Weit weg</strong> (erst Person A, dann Person B)." },
+          { num: "3", icon: "✍️", text: "Sprecht kurz und tragt eure Gedanken ins Feld ein (<strong>+10 Punkte</strong>)." }
+        ],
+        items: [
+          {
+            icon: "👋",
+            text: "Eine Freundin oder ein Freund spricht mit dir.",
+            reflection: "<strong>Warum habt ihr eure Karten genau dort hingelegt?</strong>",
+            impulses: ["Vertrauen", "Thema des Gesprächs", "Laune", "Platz zum Wohlfühlen"]
+          },
+          {
+            icon: "🗺️",
+            text: "Eine fremde Person fragt nach dem Weg.",
+            reflection: "<strong>Worauf achtet ihr bei fremden Personen?</strong>",
+            impulses: ["Sicherheit", "nicht kennen", "kurzes Gespräch", "Abstand halten"]
+          },
+          {
+            icon: "🤗",
+            text: "Jemand möchte dich trösten.",
+            reflection: "<strong>Was hilft euch, wenn es euch schlecht geht?</strong>",
+            impulses: ["Ruhe", "zuhören", "Berührung vs. Abstand", "vorher fragen"]
+          },
+          {
+            icon: "🫱",
+            text: "Jemand berührt deine Schulter.",
+            reflection: "<strong>Wovon hängt es ab, ob das okay ist?</strong>",
+            impulses: ["wer berührt", "erschrecken", "Überraschung", "eigener Körper"]
+          }
+        ]
+      },
+      3: {
+        title: "3. Stopp-Quiz",
+        demoSpeech: "Beispiel für 3. Stopp-Quiz. Wählt den Satz, der höflich und klar ist. Unhöfliche Sätze geben keine Punkte.",
+        demoSteps: [
+          { num: "1", icon: "🗣️", text: "Lest die Situation. Beispiel: <strong>„Person A redet dir immer dazwischen.“</strong>" },
+          { num: "2", icon: "❓", text: "Wählt den <strong>höflichen und klaren Stopp-Satz</strong> aus." },
+          { num: "3", icon: "⭐", text: "Richtige Antwort = <strong>+10 Punkte</strong>. Unhöfliche Antwort = <strong>0 Punkte</strong>." }
+        ],
+        items: [
+          {
+            icon: "🗣️",
+            text: "Person A redet dir immer dazwischen.",
+            options: [
+              { text: "„Bitte lass mich erst ausreden, Stopp.“", correct: true, why: "Höflich mit „Bitte“ und trotzdem klar – super!" },
+              { text: "„Halt die Klappe, du nervst total!“", correct: false, why: "Unhöflich und verletzend – das gibt 0 Punkte." },
+              { text: "„Ist egal, mach einfach weiter.“", correct: false, why: "Damit setzt du keine Grenze – 0 Punkte." }
+            ]
+          },
+          {
+            icon: "🔒",
+            text: "Person A stellt sehr private Fragen.",
+            options: [
+              { text: "„Bitte frag das nicht, das ist für mich privat.“", correct: true, why: "Höflich und eindeutig – du musst den Grund nicht erklären." },
+              { text: "„Was geht dich das an, du Spion?!“", correct: false, why: "Zu unfreundlich – das gibt 0 Punkte." },
+              { text: "„Ich erzähle es dir, wenn du mich in Ruhe lässt.“", correct: false, why: "Bei Privatem darfst du direkt Nein sagen – 0 Punkte." }
+            ]
+          },
+          {
+            icon: "🛠️",
+            text: "Person A gibt dir ungefragt Tipps.",
+            options: [
+              { text: "„Danke, bitte lass es mich zuerst allein probieren.“", correct: true, why: "Freundlich und klar – so bleibt es respektvoll." },
+              { text: "„Tu nicht so schlau, du hast keine Ahnung!“", correct: false, why: "Unhöflich und abwertend – 0 Punkte." },
+              { text: "„Mach du es einfach für mich.“", correct: false, why: "Das ist keine Stopp-Grenze – 0 Punkte." }
+            ]
+          },
+          {
+            icon: "🧍",
+            text: "Person A steht dir direkt auf der Pelle.",
+            options: [
+              { text: "„Bitte geh einen Schritt zurück, das ist mir zu nah.“", correct: true, why: "Ruhig, höflich mit „Bitte“ und leicht verständlich." },
+              { text: "„Verzieh dich endlich!“", correct: false, why: "Zu schroff und unhöflich – 0 Punkte." },
+              { text: "„Ich drehe mich einfach weg und sage nichts.“", correct: false, why: "Ein kurzer Satz hilft der anderen Person sofort." }
+            ]
+          }
+        ]
+      },
+      4: {
+        title: "4. Helfen oder Einmischen?",
+        demoSpeech: "Übung 4 ist ein Quiz mit 7 Fragen. Es geht um Hilfe, Tipps und ungefragte Aussagen zu privaten Themen. Für jede richtige Antwort gibt es 10 Punkte.",
+        demoSteps: [
+          { num: "1", icon: "❓", text: "Lest die Situation oder den Satz (<strong>7 Fragen</strong>)." },
+          { num: "2", icon: "🤝", text: "Entscheidet: <strong>Helfen</strong> (fragen, Nein akzeptieren) oder <strong>Einmischen</strong> (ungefragt Tipps geben oder Privates sagen/bewerten)?" },
+          { num: "3", icon: "⭐", text: "Für jede richtige Antwort gibt es direkt <strong>+10 Punkte</strong>." }
+        ],
+        items: [
+          { icon: "❓", text: "„Möchtest du Hilfe?“", correct: "helfen", explain: "Du fragst vorher freundlich und lässt die Wahl offen." },
+          { icon: "💡", text: "Ungefragter Ratschlag: „An deiner Stelle würde ich das ganz anders machen!“", correct: "einmischen", explain: "Ungefragte Ratschläge können sich wie Einmischen anfühlen." },
+          { icon: "🔒", text: "Ungefragt Privates sagen: „Ich erzähle jetzt allen, was du gestern gesagt hast.“", correct: "einmischen", explain: "Private Dinge ungefragt weiterzusagen oder zu thematisieren überschreitet Grenzen." },
+          { icon: "👂", text: "„Sag Bescheid, wenn du Hilfe brauchst.“", correct: "helfen", explain: "Die andere Person entscheidet selbst, ob sie Hilfe möchte." },
+          { icon: "🧠", text: "Ungefragter Ratschlag: „Du musst einfach ruhiger bleiben, das ist doch leicht.“", correct: "einmischen", explain: "Ein ungefragter Ratschlag ohne Rückfrage ist Einmischen." },
+          { icon: "💬", text: "Ungefragt Privates kommentieren: „Warum hast du denn schon wieder so wenig Geld dabei?“", correct: "einmischen", explain: "Ungefragte Bemerkungen zu Privatem (wie Geld oder Familie) sind Einmischen." },
+          { icon: "🧩", text: "„Soll ich dir kurz zeigen, wie es geht?“", correct: "helfen", explain: "Du fragst vorher nach, ob das gewünscht ist." }
+        ]
+      }
+    };
+
+    const AMPEL_OPTIONS = [
+      { label: "🟢 Grün: Ist okay", short: "Grün", sub: "Ist okay", cls: "zone-green", icon: "🟢" },
+      { label: "🟡 Gelb: Kommt darauf an", short: "Gelb", sub: "Kommt darauf an", cls: "zone-yellow", icon: "🟡" },
+      { label: "🔴 Rot: Stopp / Nicht okay", short: "Rot", sub: "Stopp / Nicht okay", cls: "zone-red", icon: "🔴" }
+    ];
+
+    let teamPoints = 0;
+    let currentExId = null;
+    let currentStep = 0;
+    let turn = "A";
+    let choiceA = null;
+    let choiceB = null;
+    let currentBeamPercent = 50;
+    let demoTimers = [];
+
+    function stripTags(html) {
+      const div = document.createElement("div");
+      div.innerHTML = html;
+      return (div.textContent || div.innerText || "").trim();
+    }
+
+    function addPoints(amount) {
+      teamPoints += amount;
+      const pill = document.getElementById("points-pill");
+      document.getElementById("points-count").textContent = `${teamPoints} Punkte`;
+      pill.classList.remove("pop");
+      void pill.offsetWidth;
+      pill.classList.add("pop");
+      setTimeout(() => pill.classList.remove("pop"), 400);
+    }
+
+    function launchConfetti(count = 95) {
+      const colors = ["#16a34a", "#eab308", "#0284c7", "#7c3aed", "#f97316", "#ec4899"];
+      for (let i = 0; i < count; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti-piece";
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.backgroundColor = colors[i % colors.length];
+        piece.style.animationDelay = (Math.random() * 0.9) + "s";
+        piece.style.animationDuration = (2.1 + Math.random() * 1.2) + "s";
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 3600);
+      }
+    }
+
+    function speakText(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const clean = stripTags(text);
+      const u = new SpeechSynthesisUtterance(clean);
+      u.lang = "de-DE";
+      u.rate = 0.95;
+      window.speechSynthesis.speak(u);
+    }
+
+    function speakCurrentReflection() {
+      const item = EXERCISES[currentExId].items[currentStep - 1];
+      speakText(`${item.reflection} Denk-Impulse: ${item.impulses.join(", ")}`);
+    }
+
+    function togglePause(show) {
+      const overlay = document.getElementById("pause-overlay");
+      if (show) {
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+        overlay.classList.add("visible");
+      } else {
+        overlay.classList.remove("visible");
+      }
+    }
+
+    function goHome() {
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      clearDemoTimers();
+      document.getElementById("view-home").classList.remove("hidden");
+      document.getElementById("view-exercise").classList.add("hidden");
+      document.getElementById("btn-home").classList.add("hidden");
+    }
+
+    function clearDemoTimers() {
+      demoTimers.forEach(t => clearTimeout(t));
+      demoTimers = [];
+    }
+
+    function startExercise(id) {
+      currentExId = id;
+      currentStep = 0;
+      const ex = EXERCISES[id];
+
+      document.getElementById("view-home").classList.add("hidden");
+      document.getElementById("view-exercise").classList.remove("hidden");
+      document.getElementById("btn-home").classList.remove("hidden");
+      document.getElementById("exercise-title").textContent = ex.title;
+
+      document.getElementById("demo-container").classList.remove("hidden");
+      document.getElementById("task-container").classList.add("hidden");
+      document.getElementById("award-container").classList.add("hidden");
+
+      document.getElementById("btn-read-demo").onclick = () => speakText(ex.demoSpeech);
+
+      renderProgressDots();
+      replayDemoAnimation();
+    }
+
+    function replayDemoAnimation() {
+      clearDemoTimers();
+      const ex = EXERCISES[currentExId];
+      const stage = document.getElementById("anim-demo-stage");
+
+      stage.innerHTML = ex.demoSteps.map((s, idx) => `
+        <div class="anim-step" id="anim-step-${idx}">
+          <div class="anim-num">${s.num}</div>
+          <div style="font-size: 26px;">${s.icon}</div>
+          <div>${s.text}</div>
+        </div>
+      `).join("");
+
+      ex.demoSteps.forEach((_, idx) => {
+        const t = setTimeout(() => {
+          document.querySelectorAll(".anim-step").forEach(el => el.classList.remove("highlight"));
+          const el = document.getElementById(`anim-step-${idx}`);
+          if (el) {
+            el.classList.add("visible", "highlight");
+          }
+        }, idx * 900);
+        demoTimers.push(t);
+      });
+    }
+
+    function startRealTasks() {
+      clearDemoTimers();
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      currentStep = 1;
+      document.getElementById("demo-container").classList.add("hidden");
+      document.getElementById("task-container").classList.remove("hidden");
+      loadCurrentItem();
+    }
+
+    function renderProgressDots() {
+      const ex = EXERCISES[currentExId];
+      const dots = document.getElementById("step-dots");
+      const total = ex.items.length;
+      let html = "";
+
+      for (let i = 1; i <= total; i++) {
+        let cls = "step-dot";
+        if (i < currentStep) cls += " done";
+        if (i === currentStep) cls += " active";
+        html += `<div class="${cls}">${i}</div>`;
+      }
+      dots.innerHTML = html;
+
+      if (currentStep === 0) {
+        document.getElementById("step-counter").textContent = "Beispiel";
+      } else if (currentStep <= total) {
+        document.getElementById("step-counter").textContent = `Frage ${currentStep} von ${total}`;
+      } else {
+        document.getElementById("step-counter").textContent = "Fertig";
+      }
+    }
+
+    function loadCurrentItem() {
+      const ex = EXERCISES[currentExId];
+      renderProgressDots();
+
+      if (currentStep > ex.items.length) {
+        document.getElementById("done-tag-" + currentExId).classList.remove("hidden");
+        document.getElementById("menu-card-" + currentExId).classList.add("completed");
+
+        if (currentExId === 4) {
+          showGrandAward();
+        } else {
+          goHome();
+        }
+        return;
+      }
+
+      const item = ex.items[currentStep - 1];
+      turn = "A";
+      choiceA = null;
+      choiceB = null;
+      currentBeamPercent = 50;
+
+      document.getElementById("card-icon").textContent = item.icon;
+      document.getElementById("card-text").textContent = stripTags(item.text);
+      document.getElementById("btn-read-card").onclick = () => speakText(item.text);
+
+      document.getElementById("compare-area").classList.add("hidden");
+      renderAnswerArea();
+    }
+
+    function renderAnswerArea() {
+      const item = EXERCISES[currentExId].items[currentStep - 1];
+      const banner = document.getElementById("turn-banner");
+      const answerArea = document.getElementById("answer-area");
+
+      if (currentExId === 1) {
+        banner.innerHTML = turn === "A"
+          ? `<div class="turn-banner turn-a"><span>👤 Person A ist dran</span><span style="font-size: 16px; font-weight: normal;">Person B schaut kurz weg</span></div>`
+          : `<div class="turn-banner turn-b"><span>👤 Person B ist dran</span></div>`;
+
+        answerArea.innerHTML = `
+          <div class="grid-3">
+            ${AMPEL_OPTIONS.map((opt, idx) => `
+              <button class="choice-btn ${opt.cls}" onclick="onAmpelSelect(${idx})">
+                <span style="font-size: 40px;">${opt.icon}</span>
+                <span>${opt.short}</span>
+                <span style="font-size: 15px; font-weight: normal;">${opt.sub}</span>
+              </button>
+            `).join("")}
+          </div>
+        `;
+      } else if (currentExId === 2) {
+        currentBeamPercent = 50;
+        banner.innerHTML = turn === "A"
+          ? `<div class="turn-banner turn-a"><span>👤 Person A schiebt die Karte auf den Strahl</span></div>`
+          : `<div class="turn-banner turn-b"><span>👤 Person B schiebt die Karte auf den Strahl</span></div>`;
+
+        answerArea.innerHTML = `
+          <div class="beam-wrapper">
+            <div class="beam-labels">
+              <span>🧍🧍 Nah</span>
+              <span>🧍 ↔️ 🧍 Mittel</span>
+              <span>🧍 ⬅️➡️ 🧍 Weit weg</span>
+            </div>
+            <div class="beam-track" id="beam-track">
+              <div class="beam-line"></div>
+              <div class="draggable-card" id="draggable-card" style="left: 50%; transform: translateX(-50%);">
+                <span>${item.icon}</span>
+                <span id="beam-pos-label">Mitte (50 %)</span>
+              </div>
+            </div>
+            <div class="beam-hint-row">
+              <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="nudgeBeam(-10)">⬅️ Näher</button>
+                <button type="button" onclick="nudgeBeam(10)">Weiter weg ➡️</button>
+              </div>
+              <button class="btn-primary" onclick="confirmBeamPosition()">✅ Position festlegen</button>
+            </div>
+          </div>
+        `;
+        initBeamDrag();
+      } else if (currentExId === 3) {
+        banner.innerHTML = `<div class="turn-banner turn-team"><span>❓ Quiz: Welcher Satz passt?</span></div>`;
+        answerArea.innerHTML = `
+          <div class="sentence-grid">
+            ${item.options.map((opt, idx) => `
+              <button class="sentence-btn" onclick="onQuiz3Select(${idx})">
+                ${opt.text}
+              </button>
+            `).join("")}
+          </div>
+        `;
+      } else if (currentExId === 4) {
+        banner.innerHTML = `<div class="turn-banner turn-team"><span>❓ Quiz: Helfen oder Einmischen?</span></div>`;
+        answerArea.innerHTML = `
+          <div class="grid-2">
+            <button class="choice-btn zone-green" onclick="onQuiz4Select('helfen')">
+              <span style="font-size: 40px;">🤝</span>
+              <span>Helfen</span>
+              <span style="font-size: 15px; font-weight: normal;">Fragen & Nein akzeptieren</span>
+            </button>
+            <button class="choice-btn zone-red" onclick="onQuiz4Select('einmischen')">
+              <span style="font-size: 40px;">🚫</span>
+              <span>Einmischen</span>
+              <span style="font-size: 15px; font-weight: normal;">Ungefragt Tipps / Privates</span>
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    function updateBeamVisual(pct) {
+      currentBeamPercent = Math.max(0, Math.min(100, Math.round(pct)));
+      const card = document.getElementById("draggable-card");
+      const label = document.getElementById("beam-pos-label");
+      if (!card || !label) return;
+
+      card.style.left = currentBeamPercent + "%";
+      card.style.transform = `translateX(-${currentBeamPercent}%)`;
+
+      let zoneName = "Mitte";
+      if (currentBeamPercent <= 30) zoneName = "Nah";
+      else if (currentBeamPercent >= 70) zoneName = "Weit weg";
+
+      label.textContent = `${zoneName} (${currentBeamPercent} %)`;
+    }
+
+    function nudgeBeam(delta) {
+      updateBeamVisual(currentBeamPercent + delta);
+    }
+
+    function initBeamDrag() {
+      const track = document.getElementById("beam-track");
+      const card = document.getElementById("draggable-card");
+      if (!track || !card) return;
+
+      let dragging = false;
+
+      const setFromClientX = (clientX) => {
+        const rect = track.getBoundingClientRect();
+        const pad = 16;
+        const usableWidth = Math.max(1, rect.width - pad * 2);
+        const rel = (clientX - rect.left - pad) / usableWidth;
+        updateBeamVisual(rel * 100);
+      };
+
+      card.addEventListener("pointerdown", (e) => {
+        dragging = true;
+        card.setPointerCapture(e.pointerId);
+      });
+
+      card.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        setFromClientX(e.clientX);
+      });
+
+      card.addEventListener("pointerup", () => {
+        dragging = false;
+      });
+
+      track.addEventListener("click", (e) => {
+        if (e.target === card || card.contains(e.target)) return;
+        setFromClientX(e.clientX);
+      });
+    }
+
+    function confirmBeamPosition() {
+      const pct = currentBeamPercent;
+      let zoneName = "Mitte";
+      if (pct <= 30) zoneName = "Nah";
+      else if (pct >= 70) zoneName = "Weit weg";
+      const label = `${zoneName} (${pct} %)`;
+
+      if (turn === "A") {
+        choiceA = label;
+        turn = "B";
+        renderAnswerArea();
+      } else {
+        choiceB = label;
+        showTalkAndInputBox();
+      }
+    }
+
+    function onAmpelSelect(idx) {
+      const val = AMPEL_OPTIONS[idx].label;
+      if (turn === "A") {
+        choiceA = val;
+        turn = "B";
+        renderAnswerArea();
+      } else {
+        choiceB = val;
+        showTalkAndInputBox();
+      }
+    }
+
+    function showTalkAndInputBox() {
+      const item = EXERCISES[currentExId].items[currentStep - 1];
+      document.getElementById("answer-area").innerHTML = "";
+      document.getElementById("turn-banner").innerHTML = `<div class="turn-banner turn-team"><span>💬 Sprecht kurz und tragt eure Gedanken ein</span></div>`;
+
+      const compareArea = document.getElementById("compare-area");
+      compareArea.classList.remove("hidden");
+      compareArea.innerHTML = `
+        <div class="compare-row">
+          <div class="choice-summary">
+            <div style="color: #075985; font-weight: bold; margin-bottom: 6px;">Person A</div>
+            <div style="font-size: 19px; font-weight: bold;">${choiceA}</div>
+          </div>
+          <div class="choice-summary">
+            <div style="color: #4c1d95; font-weight: bold; margin-bottom: 6px;">Person B</div>
+            <div style="font-size: 19px; font-weight: bold;">${choiceB}</div>
+          </div>
+        </div>
+
+        <div class="reflection-box">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+            <div>💬 ${item.reflection}</div>
+            <button class="btn-speak" onclick="speakCurrentReflection()">🔊 Vorlesen</button>
+          </div>
+
+          <div class="impulse-box">
+            <strong>💡 Denk-Impulse (Stichpunkte):</strong>
+            <div class="impulse-chips">
+              ${item.impulses.map(imp => `<span class="impulse-chip">• ${imp}</span>`).join("")}
+            </div>
+          </div>
+
+          <label for="talk-answer-input" style="display: block; margin-top: 14px; font-weight: bold; font-size: 16px;">
+            ✍️ Eure Gedanken in Stichpunkten oder kurzen Worten:
+          </label>
+          <textarea
+            id="talk-answer-input"
+            class="talk-textarea"
+            placeholder="Schreibt hier eure eigenen Stichpunkte hinein..."
+            oninput="onTalkInputChange()"
+          ></textarea>
+        </div>
+
+        <button id="btn-submit-talk" class="btn-primary" disabled onclick="submitTalkAnswer()">
+          🔒 Zuerst etwas ins Textfeld eintragen
+        </button>
+      `;
+    }
+
+    function onTalkInputChange() {
+      const input = document.getElementById("talk-answer-input");
+      const btn = document.getElementById("btn-submit-talk");
+      if (!input || !btn) return;
+      const hasText = input.value.trim().length > 0;
+      btn.disabled = !hasText;
+      btn.textContent = hasText
+        ? "✅ Eingetragen – Punkte sichern (+10 Punkte) ➡️"
+        : "🔒 Zuerst etwas ins Textfeld eintragen";
+    }
+
+    function submitTalkAnswer() {
+      const input = document.getElementById("talk-answer-input");
+      if (!input || input.value.trim().length === 0) return;
+      addPoints(10);
+      currentStep++;
+      loadCurrentItem();
+    }
+
+    function onQuiz3Select(idx) {
+      const item = EXERCISES[3].items[currentStep - 1];
+      const chosen = item.options[idx];
+
+      document.querySelectorAll("#answer-area button").forEach(b => b.disabled = true);
+
+      const compareArea = document.getElementById("compare-area");
+      compareArea.classList.remove("hidden");
+
+      if (chosen.correct) {
+        addPoints(10);
+        compareArea.innerHTML = `
+          <div class="quiz-feedback quiz-ok">
+            <div style="font-size: 20px; font-weight: bold; margin-bottom: 6px;">✅ Sehr gut! (+10 Punkte)</div>
+            <p>${chosen.why}</p>
+          </div>
+          <button class="btn-primary" onclick="advanceQuizStep()">Weiter zur nächsten Frage ➡️</button>
+        `;
+      } else {
+        compareArea.innerHTML = `
+          <div class="quiz-feedback quiz-bad">
+            <div style="font-size: 20px; font-weight: bold; margin-bottom: 6px;">❌ Keine Punkte für diese Antwort (0 Punkte)</div>
+            <p>${chosen.why}</p>
+          </div>
+          <button class="btn-primary" onclick="advanceQuizStep()">Weiter zur nächsten Frage ➡️</button>
+        `;
+      }
+    }
+
+    function onQuiz4Select(chosen) {
+      const item = EXERCISES[4].items[currentStep - 1];
+      const isCorrect = chosen === item.correct;
+
+      document.querySelectorAll("#answer-area button").forEach(b => b.disabled = true);
+
+      const compareArea = document.getElementById("compare-area");
+      compareArea.classList.remove("hidden");
+
+      if (isCorrect) {
+        addPoints(10);
+        compareArea.innerHTML = `
+          <div class="quiz-feedback quiz-ok">
+            <div style="font-size: 20px; font-weight: bold; margin-bottom: 6px;">✅ Richtig! (+10 Punkte)</div>
+            <p>${item.explain}</p>
+          </div>
+          <button class="btn-primary" onclick="advanceQuizStep()">Nächste Frage ➡️</button>
+        `;
+      } else {
+        compareArea.innerHTML = `
+          <div class="quiz-feedback quiz-bad">
+            <div style="font-size: 20px; font-weight: bold; margin-bottom: 6px;">❌ Nicht ganz (0 Punkte)</div>
+            <p>${item.explain}</p>
+          </div>
+          <button class="btn-primary" onclick="advanceQuizStep()">Nächste Frage ➡️</button>
+        `;
+      }
+    }
+
+    function advanceQuizStep() {
+      currentStep++;
+      loadCurrentItem();
+    }
+
+    function showGrandAward() {
+      document.getElementById("view-home").classList.add("hidden");
+      document.getElementById("view-exercise").classList.remove("hidden");
+      document.getElementById("btn-home").classList.remove("hidden");
+
+      document.getElementById("demo-container").classList.add("hidden");
+      document.getElementById("task-container").classList.add("hidden");
+      document.getElementById("award-container").classList.remove("hidden");
+
+      document.getElementById("exercise-title").textContent = "🛡️ Safe-Space-Team – Verleihung";
+      document.getElementById("step-dots").innerHTML = "";
+      document.getElementById("step-counter").textContent = "Geschafft!";
+      document.getElementById("award-final-points").textContent = `${teamPoints} Punkte gesammelt`;
+
+      launchConfetti(95);
+      speakText(`Geschafft! Ihr habt das Safe-Space-Team-Abzeichen erhalten und ${teamPoints} Punkte gesammelt.`);
+    }
+  </script>
+</body>
+</html>
